@@ -1,0 +1,23 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "vmark.excludeFolders": [
+      ".git",
+      "node_modules",
+      ".vmark"
+    ],
+    "vmark.showHiddenFiles": false,
+    "vmark.lastOpenTabs": [
+      "/Users/xiaolin/Downloads/同步空间/mesh/tasks.md"
+    ],
+    "vmark.identity": {
+      "id": "8d0d4cfc-7d69-420a-952f-b4aa0e0d8902",
+      "createdAt": 1773411808235,
+      "trustLevel": "untrusted"
+    }
+  }
+}

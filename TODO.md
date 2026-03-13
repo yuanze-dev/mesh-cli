@@ -1,6 +1,6 @@
 # Mesh 项目 TODO
 
-> 晓力看的项目进度跟踪 | 最后更新：2026-03-13
+> 晓力看的项目进度跟踪 | 最后更新：2026-03-14 00:02
 
 ---
 
@@ -8,7 +8,7 @@
 
 | 阶段 | 状态 | 完成度 |
 |-----|------|--------|
-| 第一阶段：核心存储层 | ⏳ 待开始 | 0% |
+| 第一阶段：核心存储层 | 🔄 进行中 | 80% |
 | 第二阶段：Markdown 兼容 | ⏳ 待开始 | 0% |
 | 第三阶段：同步功能 | ⏳ 待开始 | 0% |
 | 第四阶段：Agent 协作 | ⏳ 待开始 | 0% |
@@ -29,10 +29,10 @@
 | 任务 | 状态 | 负责人 | 优先级 |
 |-----|------|--------|--------|
 | TASK-001 初始化 Go 项目 | ✅ 完成 | 开发 Agent | P0 |
-| TASK-002 实现 SQLite 存储层 | ⏳ 待开始 | 开发 Agent | P0 |
-| TASK-003 实现 mesh collect 命令 | ⏳ 待开始 | 开发 Agent | P0 |
-| TASK-004 实现 mesh query 命令 | ⏳ 待开始 | 开发 Agent | P0 |
-| TASK-005 实现 mesh list 命令 | ⏳ 待开始 | 开发 Agent | P0 |
+| TASK-002 实现 SQLite 存储层 | ✅ 完成 | 开发 Agent | P0 |
+| TASK-003 实现 mesh collect 命令 | ✅ 已审查通过 | 开发 Agent | P0 |
+| TASK-004 实现 mesh query 命令 | ✅ 已审查通过 | 开发 Agent | P0 |
+| TASK-005 实现 mesh list 命令 | ✅ 已审查通过 | 开发 Agent | P0 |
 
 **验收标准**：能采集数据、查询数据、列出数据
 
@@ -132,6 +132,12 @@ Review Agent（1个）
 - **定义角色**：人类、开发 Agent、Review Agent
 - **创建 TODO.md**：供人类查看项目进度
 - **创建 tasks.md**：供 AI 查看任务详情
+- **完成 TASK-001**：实现 Go 项目初始化（go mod/main.go/help/version）并标记完成
+- **完成 TASK-002**：实现 SQLite 存储层（NewStore/Insert/Query/List/Close）并补充单元测试
+- **完成 TASK-003**：实现 `mesh collect` 命令（参数解析、校验、写库、友好输出）并标记待审查
+- **完成 TASK-004**：实现 `mesh query` 命令（关键词/来源/标签过滤、limit、格式化输出）并标记待审查
+- **完成 TASK-005**：实现 `mesh list` 命令（列出记录/source过滤/limit限制/表格输出）并标记待审查
+- **Review 更新**：TASK-003、TASK-005 审查通过；TASK-004 发现主入口未注册 `query` 子命令，需修复后复审
 
 ---
 

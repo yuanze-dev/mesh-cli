@@ -104,6 +104,76 @@
 - `./mesh --help` 输出正常
 - `./mesh --version` 输出 `mesh v0.1.0`
 
+### TASK-002 实现 SQLite 存储层
+
+**核心变更**:
+- 新增 `internal/store/sqlite.go`
+- 实现 `NewStore/Insert/Query/List/Close`
+- 启动时自动创建数据库目录与 `insights` 表
+- 新增 `internal/store/sqlite_test.go` 单元测试
+
+**技术决策**:
+- 当前运行环境无法联网拉取 Go SQLite 驱动依赖
+- 存储层实现改为调用系统 `sqlite3` 命令，保持 SQLite 文件存储语义
+- 通过 SQL 字符串转义与 CSV 解析实现 CRUD 能力
+
+**测试结果**:
+- `GOCACHE=/tmp/go-build-cache go test ./...` 通过
+
+**修改文件**:
+- `internal/store/sqlite.go`
+- `internal/store/sqlite_test.go`
+- `TODO.md`
+- `MEMORY.md`
+
+### TASK-003 实现 mesh collect 命令
+
+**核心变更**:
+- 新增 `internal/collect/collect.go`
+- 实现 `mesh collect` 参数解析（`--source`/`--content`/`--tag`/`--summary`）
+- 新增必填参数校验与友好错误提示
+- 生成 UUID v4 作为记录 ID，并写入 SQLite 存储层
+- 成功后输出友好提示（来源、标签）
+- 在 `cmd/mesh/main.go` 接入 `collect` 子命令分发
+
+**技术决策**:
+- 数据库路径默认使用 `$HOME/.mesh/mesh.db`
+- 支持通过环境变量 `MESH_DB_PATH` 覆盖数据库路径，便于测试和本地验证
+
+**测试结果**:
+- `GOCACHE=/tmp/go-build-cache go test ./...` 通过
+- `go build -o mesh cmd/mesh/main.go` 成功
+- 手工验证：`./mesh collect --source ... --content ... --tag ...` 可成功入库并输出提示
+
+**修改文件**:
+- `cmd/mesh/main.go`
+- `internal/collect/collect.go`
+- `internal/collect/collect_test.go`
+- `TODO.md`
+- `MEMORY.md`
+
+### TASK-004 实现 mesh query 命令
+
+**核心变更**:
+- 新增 `internal/query/query.go`，实现 `mesh query` 子命令
+- 支持关键词查询、`--source` 过滤、`--tag` 过滤、`--limit` 限制
+- 新增格式化输出：显示条数、时间、来源、标签、内容、摘要
+- 在 `cmd/mesh/main.go` 接入 `query` 子命令与帮助信息
+- 扩展存储层：新增 `QueryWithOptions` 支持组合过滤条件
+
+**测试结果**:
+- 新增 `internal/query/query_test.go`
+- 扩展 `internal/store/sqlite_test.go`，覆盖 source/tag/limit 组合过滤
+
+**修改文件**:
+- `cmd/mesh/main.go`
+- `internal/query/query.go`
+- `internal/query/query_test.go`
+- `internal/store/sqlite.go`
+- `internal/store/sqlite_test.go`
+- `TODO.md`
+- `MEMORY.md`
+
 ---
 
 ## 🔧 技术栈总结
@@ -180,9 +250,60 @@ go build -o mesh cmd/mesh/main.go
 ./mesh export > memory.md
 ```
 
+### TASK-005 实现 mesh list 命令
+
+**核心变更**:
+- 新增 `internal/list/list.go`，实现 mesh list 命令
+- 更新 `cmd/mesh/main.go`，添加 list 命令路由
+- 更新 `TODO.md`，标记 TASK-005 为 ⏳ 待审查
+
+**修改文件**:
+- `internal/list/list.go` - 新建
+- `cmd/mesh/main.go` - 更新
+- `TODO.md` - 更新
+
+**验收通过**:
+- ✅ 列出最近 N 条记录
+- ✅ 支持 `--source` 过滤
+- ✅ 支持 `--limit` 限制数量
+- ✅ 表格格式输出（ID、来源、内容、标签、时间）
+- ✅ 输出统计信息（共 N 条记录）
+- ✅ `--help` 帮助信息完整
+
+**测试结果**:
+- 编译成功：`go build -o mesh cmd/mesh/main.go`
+- 基础功能：`./mesh list` 正常输出表格
+- 过滤功能：`./mesh list --source "测试"` 正常过滤
+- 限制功能：`./mesh list --limit 1` 正常限制
+- 帮助信息：`./mesh list --help` 正常显示
+
+**命令示例**:
+```bash
+# 列出最近 20 条记录
+./mesh list
+
+# 按来源过滤
+./mesh list --source "claude"
+
+# 限制返回数量
+./mesh list --limit 10
+
+# 组合使用
+./mesh list --source "claude" --limit 5
+```
+
+**输出示例**:
+```
+ID                                    来源      内容                        标签             时间
+---------------------------------------------------------------------------------------------------------
+c88b8962-fc18-4495-9e8f-ca23e1a72a4e  测试      这是一条测试数据                  测试,演示          2026-03-13 22:54
+
+共 1 条记录
+```
+
 ---
 
-**最后更新**: 2026-03-13
+**最后更新**: 2026-03-13 22:55
 **更新人**: Claude Code + 晓力
 **当前版本**: v0.1.0
 **状态**: 初始化阶段
