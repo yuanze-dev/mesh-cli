@@ -98,10 +98,11 @@
 - `TODO.md`
 
 **测试结果**:
-- 当前执行环境缺少 `go` 命令（`command not found`）
-- 待在安装 Go 1.21+ 的环境执行：
-  - `go build ./...`
-  - `go build -o mesh cmd/mesh/main.go`
+- 已安装 Go：`go1.26.1 darwin/amd64`
+- `go build ./...` 成功
+- `go build -o mesh cmd/mesh/main.go` 成功
+- `./mesh --help` 输出正常
+- `./mesh --version` 输出 `mesh v0.1.0`
 
 ---
 
