@@ -32,7 +32,7 @@
 
 ## 📅 2026-03-13 (v0.1.0)
 
-### 项目初始化
+### 项目初始化 + Git 仓库创建
 
 **核心变更**: 创建 Mesh 项目，实现多 AI 协作的极简记忆同步工具
 
@@ -54,9 +54,35 @@
 - `key.md` - 创建
 - `TODO.md` - 人类看的项目进度
 - `tasks.md` - AI 看的任务清单
-- `docs/04-多AI协作流程.md` - 多 AI 协作流程定义
+- `docs/` - 完整文档体系
 
-**测试结果**: 待测试
+### 项目文档修复
+
+**问题**: MEMORY.md 中路径错误（`sync-space` 应为 `同步空间`）
+
+**修复内容**:
+- 修复 MEMORY.md 中所有路径错误
+- 修复 CONSTITUTION.md 中的路径错误
+- 创建 TODO.md（人类看）和重构 tasks.md（AI 看）
+- 更新团队角色定义：人类（晓力）、开发 Agent（多个）、Review Agent（1个）
+
+### Git 仓库创建
+
+**操作内容**:
+- 初始化 Git 仓库
+- 提交初始代码（12 个文件，2599 行）
+- 创建 GitHub 仓库：yuanze-dev/mesh-cli
+- 推送代码到远程仓库
+
+**仓库地址**: https://github.com/yuanze-dev/mesh-cli
+
+### 敏感信息检查
+
+**检查结果**: ✅ 无敏感信息泄露
+
+- `key.md` 已被 `.gitignore` 排除，未提交
+- 代码中无 token/password/secret 等敏感信息
+- git config 中的远程 URL 已修复（移除 token）
 
 ### TASK-001 初始化 Go 项目
 
