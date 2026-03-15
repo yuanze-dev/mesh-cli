@@ -112,6 +112,33 @@ func (s *Store) QueryWithOptions(opts types.QueryOptions) ([]*types.Insight, err
 	return s.queryRows(querySQL)
 }
 
+// ExistsByContent 检查是否存在完全相同 content 的记录。
+func (s *Store) ExistsByContent(content string) (bool, error) {
+	if s == nil {
+		return false, errors.New("store is not initialized")
+	}
+	content = strings.TrimSpace(content)
+	if content == "" {
+		return false, nil
+	}
+
+	querySQL := fmt.Sprintf(`
+	SELECT COUNT(1)
+	FROM insights
+	WHERE content = '%s'
+	LIMIT 1;
+	`, escapeSQL(content))
+	out, err := s.execWithOutput(querySQL)
+	if err != nil {
+		return false, err
+	}
+	count, err := strconv.Atoi(strings.TrimSpace(out))
+	if err != nil {
+		return false, fmt.Errorf("parse duplicate count: %w", err)
+	}
+	return count > 0, nil
+}
+
 // List 列出最近的记录，按创建时间倒序返回。
 func (s *Store) List(limit int) ([]*types.Insight, error) {
 	if s == nil {
@@ -145,6 +172,13 @@ CREATE TABLE IF NOT EXISTS insights (
     created_at INTEGER NOT NULL,
     updated_at INTEGER,
     is_shared INTEGER DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS agents (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    type TEXT,
+    device TEXT,
+    last_seen INTEGER NOT NULL
 );`
 	return s.exec(schema)
 }
@@ -231,6 +265,63 @@ func parseInsightRecord(record []string) (*types.Insight, error) {
 		insight.UpdatedAt = updatedAt
 	}
 	return insight, nil
+}
+
+// UpsertAgent 注册或更新 agent。
+func (s *Store) UpsertAgent(agent *types.Agent) error {
+	if s == nil {
+		return errors.New("store is not initialized")
+	}
+	if agent == nil || strings.TrimSpace(agent.ID) == "" || strings.TrimSpace(agent.Name) == "" {
+		return errors.New("invalid agent")
+	}
+	stmt := fmt.Sprintf(`
+	INSERT INTO agents (id, name, type, device, last_seen)
+	VALUES ('%s', '%s', '%s', '%s', %d)
+	ON CONFLICT(id) DO UPDATE SET
+		name=excluded.name,
+		type=excluded.type,
+		device=excluded.device,
+		last_seen=excluded.last_seen;
+	`, escapeSQL(agent.ID), escapeSQL(agent.Name), escapeSQL(agent.Type), escapeSQL(agent.Device), agent.LastSeen)
+	return s.exec(stmt)
+}
+
+// ListAgents 列出 agent（按最近活跃时间倒序）。
+func (s *Store) ListAgents(limit int) ([]*types.Agent, error) {
+	if s == nil {
+		return nil, errors.New("store is not initialized")
+	}
+	querySQL := fmt.Sprintf(`
+	SELECT id, name, type, device, last_seen
+	FROM agents
+	ORDER BY last_seen DESC
+	LIMIT %d;
+	`, normalizeLimit(limit))
+	out, err := s.execWithOutput(querySQL)
+	if err != nil {
+		return nil, err
+	}
+	if strings.TrimSpace(out) == "" {
+		return []*types.Agent{}, nil
+	}
+	reader := csv.NewReader(strings.NewReader(out))
+	records, err := reader.ReadAll()
+	if err != nil {
+		return nil, fmt.Errorf("parse agent rows: %w", err)
+	}
+	agents := make([]*types.Agent, 0, len(records))
+	for _, r := range records {
+		if len(r) != 5 {
+			return nil, fmt.Errorf("invalid agent record column count: %d", len(r))
+		}
+		lastSeen, err := strconv.ParseInt(r[4], 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("parse agent last_seen: %w", err)
+		}
+		agents = append(agents, &types.Agent{ID: r[0], Name: r[1], Type: r[2], Device: r[3], LastSeen: lastSeen})
+	}
+	return agents, nil
 }
 
 // validateInsight 验证输入完整性。

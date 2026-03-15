@@ -128,6 +128,16 @@ func newUUID() (string, error) {
 	), nil
 }
 
+// ResolveDBPathForReuse 暴露数据库路径解析能力给其他命令复用。
+func ResolveDBPathForReuse() (string, error) {
+	return resolveDBPath()
+}
+
+// NewUUIDForReuse 暴露 UUID 生成能力给其他命令复用。
+func NewUUIDForReuse() (string, error) {
+	return newUUID()
+}
+
 // printSuccess 输出采集成功提示。
 func printSuccess(w io.Writer, insight *types.Insight) {
 	_, _ = fmt.Fprintln(w, "✅ 已采集 1 条认知")
