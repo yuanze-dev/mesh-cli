@@ -1,6 +1,6 @@
 # Mesh 项目 TODO
 
-> 晓力看的项目进度跟踪 | 最后更新：2026-03-15 11:15
+> 晓力看的项目进度跟踪 | 最后更新：2026-03-15 13:35
 
 ---
 
@@ -145,6 +145,7 @@ Review Agent（1个）
 - **修复文档一致性问题**：补齐 `mesh --help` 中 `query` 子命令展示
 - **全量回归通过**：`go test ./...` 通过，端到端命令链路（collect/query/list/import/export/init/push/pull/sync/agent/inject）全部通过
 - **关键场景验证**：import 去重生效（新增1/跳过1）；sync 冲突备份机制生效
+- **补齐发布资料**：新增 `README.md` 与 `CHANGELOG.md`，并修正文档导航中的过时路径与仓库链接
 
 ---
 
@@ -163,8 +164,8 @@ Review Agent（1个）
 
 ## 🚀 下一步行动
 
-1. 执行全量回归测试（collect/query/list/import/export/init/push/pull/sync/agent/inject）
-2. 统一整理变更日志并更新 README/命令文档
+1. ✅ 执行全量回归测试（collect/query/list/import/export/init/push/pull/sync/agent/inject）
+2. ✅ 统一整理变更日志并更新 README/命令文档
 3. 打 tag 发布 v0.1.x 候选版本
 4. 晓力做最终验收并决定是否进入生产使用
 

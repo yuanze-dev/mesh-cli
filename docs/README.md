@@ -20,13 +20,13 @@
 **AI 处理本项目时，请按以下顺序阅读**：
 
 1. **读取项目宪法**（必须）⭐：
-   - 路径：`/Users/xiaolin/Downloads/同步空间/mesh/CONSTITUTION.md`
+   - 路径：`../CONSTITUTION.md`
 
 2. **阅读协作流程**（必须）⭐：
-   - 路径：`/Users/xiaolin/Downloads/同步空间/mesh/docs/04-多AI协作流程.md`
+   - 路径：`./04-多AI协作流程.md`
 
 3. **阅读项目记忆**：
-   - 路径：`/Users/xiaolin/Downloads/同步空间/mesh/MEMORY.md`
+   - 路径：`../MEMORY.md`
 
 4. **根据任务选择文档**：
    - 快速入门 → [01-快速入门](./01-快速入门.md)
@@ -53,11 +53,11 @@
 
 ## 🚀 快速链接
 
-- [GitHub 仓库](#) （待创建）
+- [GitHub 仓库](https://github.com/yuanze-dev/mesh-cli)
 - [任务清单](../tasks.md)
 - [项目宪法](../CONSTITUTION.md)
 - [项目记忆](../MEMORY.md)
 
 ---
 
-**最后更新**: 2026-03-13
+**最后更新**: 2026-03-15
